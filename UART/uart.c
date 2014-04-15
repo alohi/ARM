@@ -27,6 +27,7 @@
 #include "mbed.h"
 
 
+#if HIGH_LEVEL_FRAMEWORK == mbed
 // Serial Objects
 #if (defined) UART0_EN
 Serial Serial0(UART0_TX_PIN,UART0_RX_PIN); // Tx,Rx
@@ -39,6 +40,7 @@ Serial Serial2(UART2_TX_PIN,UART2_RX_PIN); // Tx,Rx
 #endif
 #if (defined) UART3_EN
 Serial Serial3(UART3_TX_PIN,UART3_RX_PIN); // Tx,Rx
+#endif
 #endif
 
 #if defined (UART_INTERRUPTS)
@@ -67,6 +69,7 @@ volatile struct UART_READ_BUFFER UART3RX;
 **/
 void Serialbegin(unsigned char uartNo,unsigned long baudRate)
 {
+#if HIGH_LEVEL_FRAMEWORK == mbed
 #ifdef UART0_EN
 if(uatNo == UART0)
 Serial0.baud(baudRate);
@@ -83,6 +86,7 @@ Serial2.baud(baudRate);
 if(uatNo == UART3)
 Serial3.baud(baudRate);
 #endif
+#endif
 }
 
 /*** Function    : Serialavailable
@@ -92,6 +96,7 @@ Serial3.baud(baudRate);
 **/
 unsigned char Serialavailable(unsigned char uartNo)
 {
+#if HIGH_LEVEL_FRAMEWORK == mbed
 #ifdef UART0_EN
 return Serial0.readable();
 #endif
@@ -104,6 +109,7 @@ return Serial2.readable();
 #ifdef UART3_EN
 return Serial3.readable();
 #endif
+#endif
 }
 
 
@@ -114,6 +120,7 @@ return Serial3.readable();
 **/
 void Serialwrite(unsigned char uartNo,char Byte)
 {
+#if HIGH_LEVEL_FRAMEWORK == mbed
 #ifdef UART0_EN
 if(uatNo == UART0)
 Serial0.putc(Byte);
@@ -130,6 +137,7 @@ Serial2.putc(Byte);
 if(uatNo == UART3)
 Serial3.putc(Byte);
 #endif
+#endif
 }
 
 /*** Function    : Serialread
@@ -139,6 +147,7 @@ Serial3.putc(Byte);
 **/
 volatile char Serialread(unsigned char uartNo)
 {
+#if HIGH_LEVEL_FRAMEWORK == mbed
 #ifdef UART0_EN
 if(uatNo == UART0)
 return Serial0.getc();
@@ -155,6 +164,7 @@ return Serial2.getc();
 if(uatNo == UART3)
 return Serial3.getc();
 #endif
+#endif
 }
 
 /*** Function    : Serialprint
@@ -164,6 +174,7 @@ return Serial3.getc();
 **/
 void Serialprint(unsigned char uartNo,char *sPtr)
 {
+#if HIGH_LEVEL_FRAMEWORK == mbed
 #ifdef UART0_EN
 if(uatNo == UART0)
 Serial0.printf(sPtr);
@@ -180,6 +191,7 @@ Serial2.printf(sPtr);
 if(uatNo == UART3)
 Serial3.printf(sPtr);
 #endif
+#endif
 }
 
 
@@ -190,6 +202,7 @@ Serial3.printf(sPtr);
 **/
 void SerialIntWrite(signed int num)
 {
+#if HIGH_LEVEL_FRAMEWORK == mbed
 #ifdef UART0_EN
 if(uatNo == UART0)
 Serial0.printf("%d",num);
@@ -206,6 +219,7 @@ Serial2.printf("%d",num);
 if(uatNo == UART3)
 Serial3.printf("%d",num);
 #endif
+#endif
 }
 
 
@@ -216,6 +230,7 @@ Serial3.printf("%d",num);
 **/
 void SerialDoubleWrite(unsigned char uartNo,double __f)
 {
+#if HIGH_LEVEL_FRAMEWORK == mbed
 #ifdef UART0_EN
 if(uatNo == UART0)
 Serial0.printf("%f",__f);
@@ -232,6 +247,7 @@ Serial2.printf("%f",__f);
 if(uatNo == UART3)
 Serial3.printf("%f",__f);
 #endif
+#endif
 }
 
 #if defined (UART_INTERRUPTS)
@@ -241,8 +257,9 @@ Serial3.printf("%f",__f);
 **   Return      : None
 **   Description : It sets the Serial Interrupt
 **/
- void setSerialinterrupt(unsigned char uartNo)
- {
+void setSerialinterrupt(unsigned char uartNo)
+{
+#if HIGH_LEVEL_FRAMEWORK == mbed
 RFIDReader.attach(&SerialRecvInterrupt, RFIDReader.RxIrq);    // Recv interrupt handler
 #ifdef UART0_EN
 if(uatNo == UART0)
@@ -260,6 +277,7 @@ Serial0.attach(&UART2_ISR, Serial2.RxIrq);
 if(uatNo == UART3)
 Serial0.attach(&UART3_ISR, Serial3.RxIrq);
 #endif
+#endif
  }
 
 /*** Function    : UART0 Interrupt Handler
@@ -270,7 +288,10 @@ Serial0.attach(&UART3_ISR, Serial3.RxIrq);
 #if defined (UART0_INTERRUPT)
 void UART0_ISR(void)
 {
-char temp = Serial0.getc();
+char temp
+#if HIGH_LEVEL_FRAMEWORK == mbed
+temp = Serial0.getc();
+#endif
 UART0RX->uartReadBuffer[UART0RX->uartReadCount++] = temp;
 if(temp  == LF)
 {
@@ -288,7 +309,10 @@ UART0RX->uartNewLineFlag = 1;
 #if defined (UART1_INTERRUPT)
 void UART1_ISR(void)
 {
-char temp = Serial1.getc();
+char temp;
+#if HIGH_LEVEL_FRAMEWORK == mbed
+temp = Serial1.getc();
+#endif
 UART1RX->uartReadBuffer[UART1RX->uartReadCount++] = temp;
 if(temp  == LF)
 {
@@ -307,7 +331,10 @@ UART1RX->uartNewLineFlag = 1;
 #if defined (UART2_INTERRUPT)
 void UART2_ISR(void)
 {
-char temp = Serial2.getc();
+char temp;
+#if HIGH_LEVEL_FRAMEWORK == mbed
+temp = Serial2.getc();
+#endif
 UART2RX->uartReadBuffer[UART2RX->uartReadCount++] = temp;
 if(temp  == LF)
 {
@@ -325,7 +352,10 @@ UART2RX->uartNewLineFlag = 1;
 #if defined (UART3_INTERRUPT)
 void UART3_ISR(void)
 {
-char temp = Serial3.getc();
+char temp;
+#if HIGH_LEVEL_FRAMEWORK == mbed
+temp = Serial3.getc();
+#endif
 UART3RX->uartReadBuffer[UART3RX->uartReadCount++] = temp;
 if(temp  == LF)
 {
@@ -342,12 +372,59 @@ UART3RX->uartNewLineFlag = 1;
 **/
 void Serialflush(unsigned char uartNo)
 {
-
+unsigned char i;
+__disable_irq(); 
+#ifdef UART0_EN
+if(uartNo == UART0)
+{
+		UART0RX->uartNewLineCount = 0;
+		UART0RX->uartNewLineFlag = 0;
+		UART0RX->uartReadCount = 0;
+		UART0RX->for(i=0;i<UART_RX_BUFFER_SIZE;i++)
+		UART0RX->uartReadBuffer[i] = CHAR_NULL;
+		UART0RX->for(i=0;i<NEW_LINE_INDEX_BUFFER_SIZE;i++)
+		UART0RX->uartNewLineIndexes[i] = CHAR_NULL;
 }
-
-
- 
-
+#endif
+#ifdef UART1_EN
+if(uartNo == UART1)
+{
+		UART1RX->uartNewLineCount = 0;
+		UART1RX->uartNewLineFlag = 0;
+		UART1RX->uartReadCount = 0;
+		UART1RX->for(i=0;i<UART_RX_BUFFER_SIZE;i++)
+		UART1RX->uartReadBuffer[i] = CHAR_NULL;
+		UART1RX->for(i=0;i<NEW_LINE_INDEX_BUFFER_SIZE;i++)
+		UART1RX->uartNewLineIndexes[i] = CHAR_NULL;
+}
+#endif
+#ifdef UART2_EN
+if(uartNo == UART2)
+{
+		UART2RX->uartNewLineCount = 0;
+		UART2RX->uartNewLineFlag = 0;
+		UART2RX->uartReadCount = 0;
+		UART2RX->for(i=0;i<UART_RX_BUFFER_SIZE;i++)
+		UART2RX->uartReadBuffer[i] = CHAR_NULL;
+		UART2RX->for(i=0;i<NEW_LINE_INDEX_BUFFER_SIZE;i++)
+		UART2RX->uartNewLineIndexes[i] = CHAR_NULL;
+}
+#endif
+#ifdef UART3_EN
+if(uartNo == UART3)
+{
+	    unsigned char i;
+		UART3RX->uartNewLineCount = 0;
+		UART3RX->uartNewLineFlag = 0;
+		UART3RX->uartReadCount = 0;
+		UART3RX->for(i=0;i<UART_RX_BUFFER_SIZE;i++)
+		UART3RX->uartReadBuffer[i] = CHAR_NULL;
+		UART3RX->for(i=0;i<NEW_LINE_INDEX_BUFFER_SIZE;i++)
+		UART3RX->uartNewLineIndexes[i] = CHAR_NULL;
+}
+#endif
+__enable_irq(); 
+}
 #endif
 
 /************************* EOF **************************************/

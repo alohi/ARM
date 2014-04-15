@@ -29,6 +29,12 @@
 #include "mbed.h"
 #include <stdio.h>            // Standard input/output file used in Serialintwrite (sprintf)
 
+#define mbed  0   // mbed framework
+#define cmsis 1   // CMSIS framework for Cortex-M series from NXP
+#define no_fw 2   // No High Level Framework
+
+#define HIGH_LEVEL_FRAMEWORK mbed
+
 #define UART_INTERRUPTS
 #define UART0_INTERRUPT
 #define UART1_INTERRUPT
